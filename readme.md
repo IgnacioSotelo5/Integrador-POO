@@ -1,6 +1,3 @@
-Tipo de trabajo: Integrador
-Sede: San Cayetano
-Módulo: POO
 Consigna general: Crear un sistema de gestión de biblioteca.
 Detalles funcionales:
 1- Administración de biblioteca.
@@ -21,4 +18,4 @@ Detalles funcionales:
 	Al acumular 6 puntos el usuario recibe una penalización que lo imposibilita de retirar ítems por el plazo de una semana.
 	2.5 BIS - Si un Usuario retira un libro y lo devuelve en el plazo correcto: decrese un punto su scoring, con un límite inferior de 0 puntos.
 3- Creación y gestión de estadísticas. Llevar registro de todos los préstamos en un archivo. Cada registro debería incluír la fecha del préstamos, el título y el nombre del usuario. Para crear archivos pueden utilizar el módulo File System de Node Js. Dicho módulo tiene métodos para crear y leer archivos. Ese archivo servirá de base para listar por pantalla el historial de préstamos.
-4- La gestión que realiza la biblioteca debe llevarse a cabo a través de un menú de opciones. Puden construirlo con el módulo nativo de Node Js llamado Readline o una bilbioteca externa como, por ejemplo, Inquirer.# Integrador-POO
+4- La gestión que realiza la biblioteca debe llevarse a cabo a través de un menú de opciones. Puden construirlo con el módulo nativo de Node Js llamado Readline o una bilbioteca externa como, por ejemplo, Inquirer.
