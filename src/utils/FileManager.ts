@@ -1,41 +1,48 @@
 import * as fs from 'node:fs'
 import { User, UserObject } from "../classes/User";
-import { Loan } from "../classes/Loan";
+import { Loan, loanObject } from "../classes/Loan";
 import * as rls from 'readline-sync'
-import { Book } from "../classes/Book";
-import { Magazine } from "../classes/Magazine";
-
+import { LibraryItem, libraryItemObject } from '../classes/LibraryItem';
+import { Book, bookObject } from '../classes/Book';
+import { Magazine, magazineObject } from '../classes/Magazine';
 
 export class FileManager{
 
     static readFile(fileName: string){
         try {
-            const items = fs.readFileSync(`./${fileName}.json`, {encoding: 'utf-8'})
-            rls.keyInPause('\n')
+            const items = fs.readFileSync(`${fileName}.json`, {encoding: 'utf-8'})
             const itemsData = JSON.parse(items)
             if(fileName === 'users'){
-                return itemsData.map((item: UserObject) => User.userFromData(item))
+                return itemsData.map((item: UserObject) => User.userFromData(item))   
             }
-            if(fileName === 'books'){
-                console.log();
-                
-            }
-            if(fileName === 'magazines'){
-                console.log();
-                
+            if(fileName === 'items'){
+                return itemsData.map((item: any) => {
+                    if (item.type === 'Book') {
+                        return Book.bookFromData(item as bookObject)
+                    } else if (item.type === 'Magazine') {
+                        return Magazine.magazineFromData(item as magazineObject)
+                    } else {
+                        return LibraryItem.itemFromData(item as libraryItemObject);
+                    }
+                })
             }
             if(fileName === 'loans'){
-                console.log();
-                
+                return itemsData.map((item: loanObject) => Loan.loanFromData(item))      
             }
+            
         } catch (error) {
             console.log(`Unexpected error: ${error}`)
+            return []
+            
         }
     }
-    static appendToFile(data: User[] | Book[] | Magazine[] | Loan[], fileName: string){
+    static appendToFile(data: User[] | LibraryItem []| Loan[], fileName: string){
+        const dir = '../data/'
+        if(!fs.existsSync(dir)){
+            fs.mkdirSync(dir)
+        }
         try {
-            fs.writeFileSync(`./${fileName}.json`, JSON.stringify(data), {encoding: 'utf-8'}  )
-            rls.keyInPause('\n')
+            fs.writeFileSync(`${dir}/${fileName}.json`, JSON.stringify(data, null, 2), {encoding: 'utf-8'}  )
         } catch (error) {
             console.log(`Unexpected error: ${error}`)
             rls.keyInPause('\n')
@@ -43,33 +50,3 @@ export class FileManager{
 
     }
 }
-// export class FileManager{
-
-//     static readUsers(){
-//         interface UserObject {
-//             id: string;
-//             name: string;
-//             address: iAddress;
-//             phoneNumber: string;
-//         }
-        
-//         try {
-//             const users = fs.readFileSync('./users.json', {encoding: 'utf-8'})
-//             rls.keyInPause('\n')
-//             const usersData = JSON.parse(users)
-//             return usersData.map((user: UserObject) => new User(user.id, user.name, {street: user.address.street, number: user.address.number, apartment: user.address.apartment}, user.phoneNumber))
-//         } catch (error) {
-//             console.log(`Unexpected error: ${error}`)
-//         }
-//     }
-//     static appendUser(data: User[]){
-//         try {
-//             fs.writeFileSync('./users.json', JSON.stringify(data), {encoding: 'utf-8'}  )
-//             rls.keyInPause('\n')
-//         } catch (error) {
-//             console.log(`Unexpected error: ${error}`)
-//             rls.keyInPause('\n')
-//         }
-
-//     }
-// }

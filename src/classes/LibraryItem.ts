@@ -1,16 +1,25 @@
+export interface libraryItemObject{
+    id: string;
+    title: string;
+    year: number
+    isAvailable: boolean
+
+}
 export class LibraryItem{
     private id: string;
     private title: string;
     private year: number;
     private isAvailable: boolean;
+    type = 'LibraryItem';
 
-    constructor(title: string, year: number, id: string){
+
+    constructor(title: string, year: number, id: string, isAvailable: boolean = true){
         this.id = id;
         this.title = title;
         this.year = year;
-        this.isAvailable = true;
+        this.isAvailable = isAvailable;
     }
-    get Id(){
+    get ID(){
         return this.id
     }
     get Title(){
@@ -34,5 +43,16 @@ export class LibraryItem{
     }
     markAsAvailable(){
         this.isAvailable = true;
+    }
+    static itemFromData(data: LibraryItem | libraryItemObject): LibraryItem {
+        if (data instanceof LibraryItem) {
+            return data;
+        } else {
+            const item = new LibraryItem(data.title, data.year, data.id, data.isAvailable);
+            return item;
+        }
+    }
+    getType(){
+        return 'LibraryItem'
     }
 }

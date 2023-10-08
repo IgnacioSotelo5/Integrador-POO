@@ -56,15 +56,25 @@ export class User {
     get Scoring(){
         return this.scoring
     }
+    increaseScoring(points: number){
+        this.scoring += points
+    }
+    decreaseScoring(points: number){
+        this.scoring -= points
+    }
     get IsPenalized(){
         return this.isPenalized
     }
     markAsPenalized(){
         this.isPenalized = true
     }
-    static userFromData(data: UserObject): User{
-        const user = new User(data.id, data.name, data.address, data.phoneNumber)
-        return user
+    static userFromData(data: User | UserObject): User {
+        if (data instanceof User) {
+            return data;
+        } else {
+            const item = new User(data.id, data.name, data.address, data.phoneNumber);
+            return item;
+        }
     }
 
 }

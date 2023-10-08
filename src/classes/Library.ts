@@ -6,20 +6,38 @@ import { mainMenu } from "../menu/mainMenu";
 import { FileManager } from "../utils/FileManager";
 import * as rls from 'readline-sync'
 import { randomUUID } from "crypto";
+import { LibraryItem } from "./LibraryItem";
 
 export class Library {
-    
-     books: Book[];
-     magazines: Magazine[];
+     items: LibraryItem[];
      loans: Loan[];
      users: User[];
 
     constructor(){
-        this.books = []
-        this.magazines = []
+        this.items = []
         this.loans = []
         this.users = []
     }
+
+    //getters 
+
+    getUser(id: string): User | undefined{
+        const read = FileManager.readFile('users')
+        if(read){
+            this.users = read
+        }
+        return this.users.find(user => user.ID === id)
+    }
+    getItem(id: string): LibraryItem | undefined{
+        const read = FileManager.readFile('items')
+        if(read){
+            this.items = read 
+        }
+        return this.items.find(item => item.ID === id)
+    }
+    
+
+    //Users management
     
     createUser(){
         const readResult = FileManager.readFile('users')
@@ -39,7 +57,6 @@ export class Library {
         const newUser = new User(data.id, data.name, data.address, data.phoneNumber)
         this.users.push(newUser)
         FileManager.appendToFile(this.users, 'users')
-        console.log(this.users);
         rls.keyInPause('\n')
     }
     showUsers(){
@@ -119,10 +136,13 @@ export class Library {
         }
         rls.keyInPause('\n')
     }
+
+    //Magazines management
+
      createMagazine(){
-        const readResult = FileManager.readFile('magazines')
+        const readResult = FileManager.readFile('items')
         if(readResult){
-            this.magazines = readResult
+            this.items = readResult
         }
         const data = {
             id: randomUUID(),
@@ -131,22 +151,22 @@ export class Library {
             year: rls.questionInt('Add the year of the magazine: ')
         }
         const newMagazine = new Magazine(data.editorial, data.title, data.year, data.id)
-        this.magazines.push(newMagazine)
-        FileManager.appendToFile(this.magazines, 'magazines')
-        console.log(this.magazines);
+        this.items.push(newMagazine)
+        FileManager.appendToFile(this.items, 'items')
+        console.log(this.items);
         rls.keyInPause('\n')
     }
    
      updateMagazine(){
-        const readResult = FileManager.readFile('magazines')
+        const readResult = FileManager.readFile('items')
         if(readResult){
-            this.magazines = readResult
+            this.items = readResult
         }
         const idToUpdate = rls.question('Enter the ID of the magazine to Update: ')
-        const magazineIndex = this.magazines.findIndex((magazine) => magazine.Id === idToUpdate)
+        const magazineIndex = this.items.findIndex((item) => item.ID === idToUpdate)
 
         if (magazineIndex !== -1){
-            const magazineToUpdate = this.magazines[magazineIndex]
+            const magazineToUpdate = this.items[magazineIndex] as Magazine
             const confirmation = rls.keyInYN(`Do you want to update ${magazineToUpdate.Title}`)
         
             if(confirmation){
@@ -159,7 +179,7 @@ export class Library {
             magazineToUpdate.Editorial = magazineData.editorial
             magazineToUpdate.Title = magazineData.title
             magazineToUpdate.Year = magazineData.year
-            FileManager.appendToFile(this.magazines, 'magazines')
+            FileManager.appendToFile(this.items, 'items')
         } else{
             console.log(`Update cancelled. ${magazineToUpdate.Title} not updated.\n`);
         }
@@ -167,46 +187,51 @@ export class Library {
     }
      deleteMagazine(){
         const idToDelete = rls.question('Enter the ID of the book to Delete: ')
-        const magazineIndex = this.magazines.findIndex((magazine) => magazine.Id === idToDelete)
+        const magazineIndex = this.items.findIndex((item) => item.ID === idToDelete)
 
         if (magazineIndex !== -1){
-            const magazineToDelete = this.magazines[magazineIndex]
+            const magazineToDelete = this.items[magazineIndex]
             const confirmation = rls.keyInYN(`Do you want to update ${magazineToDelete.Title}`)
         
             if(confirmation){
-            this.magazines.splice(magazineIndex, 1)
-            FileManager.appendToFile(this.magazines, 'magazines')
+            this.items.splice(magazineIndex, 1)
+            FileManager.appendToFile(this.items, 'items')
         } else{
             console.log('Deletion canceled.');
         }
     }
     }
      showMagazines(){
-        const readResult = FileManager.readFile('magazines')
+        const readResult = FileManager.readFile('items')
         
         if(readResult){
-            this.magazines = readResult
+            this.items = readResult
             console.log( '-'.repeat(5), 'Magazines', '-'.repeat(5));
         }
-        if(!this.magazines.length){
+        if(!this.items.length){
             console.log('No magazines found. \n');
         } else {
-            this.magazines.forEach((magazine: Magazine) => {   
-                console.log(`
-            ID: ${magazine.Id},
-            Title: ${magazine.Title},
-            Editorial: ${magazine.Editorial}
-            Year: ${magazine.Year},
-            `)
-            })
+            this.items.forEach((item) => {   
+                if(item instanceof Magazine){
+                    console.log(`
+                    ID: ${item.ID},
+                    Title: ${item.Title},
+                    Editorial: ${item.Editorial}
+                    Year: ${item.Year},
+                    `)
+                }
+                })
         }
         rls.keyInPause('\n')
         
     }
+
+    //Book management
+
      createBook(){
-        const readResult = FileManager.readFile('books')
+        const readResult = FileManager.readFile('items')
         if(readResult){
-            this.books = readResult
+            this.items = readResult
         }
         const data = {
             id: randomUUID(),
@@ -215,22 +240,22 @@ export class Library {
             year: rls.questionInt('Add the year of the book: ')
         }
         const newBook = new Book(data.author, data.title, data.year, data.id)
-        this.books.push(newBook)
-        FileManager.appendToFile(this.books, 'books')
-        console.log(this.books);
+        this.items.push(newBook)
+        FileManager.appendToFile(this.items, 'items')
+        console.log(this.items);
         rls.keyInPause('\n')
     }
 
      updateBook(){
-        const readResult = FileManager.readFile('books')
+        const readResult = FileManager.readFile('items')
         if(readResult){
-            this.books = readResult
+            this.items = readResult
         }
         const idToUpdate = rls.question('Enter the ID of the book to Update: ')
-        const bookIndex = this.books.findIndex((book) => book.Id === idToUpdate)
+        const bookIndex = this.items.findIndex((book) => book.ID === idToUpdate)
 
         if (bookIndex !== -1){
-            const bookToUpdate = this.books[bookIndex]
+            const bookToUpdate = this.items[bookIndex] as Book
             const confirmation = rls.keyInYN(`Do you want to update ${bookToUpdate.Title}`)
         
             if(confirmation){
@@ -243,7 +268,7 @@ export class Library {
             bookToUpdate.Author = bookData.author
             bookToUpdate.Title = bookData.title
             bookToUpdate.Year = bookData.year
-            FileManager.appendToFile(this.books, 'books')
+            FileManager.appendToFile(this.items, 'items')
         } else{
             console.log(`Update cancelled. ${bookToUpdate.Title} not updated.\n`);
         }
@@ -251,43 +276,176 @@ export class Library {
     }
      deleteBook(){
         const idToDelete = rls.question('Enter the ID of the book to Delete: ')
-        const bookIndex = this.books.findIndex((book) => book.Id === idToDelete)
+        const bookIndex = this.items.findIndex((book) => book.ID === idToDelete)
 
         if (bookIndex !== -1){
-            const bookToDelete = this.books[bookIndex]
+            const bookToDelete = this.items[bookIndex]
             const confirmation = rls.keyInYN(`Do you want to update ${bookToDelete.Title}`)
         
             if(confirmation){
-            this.books.splice(bookIndex, 1)
-            FileManager.appendToFile(this.books, 'books')
+            this.items.splice(bookIndex, 1)
+            FileManager.appendToFile(this.items, 'items')
         } else{
             console.log('Deletion canceled.');
         }
     }
 }    
      showBooks(){
-        const readResult = FileManager.readFile('books')
+        const readResult = FileManager.readFile('items')
         
         if(readResult){
-            this.books = readResult
+            this.items = readResult
             console.log( '-'.repeat(5), 'Books', '-'.repeat(5));
         }
-        if(!this.books.length){
+        if(!this.items.length){
             console.log('No books found. \n');
         } else {
-            this.books.forEach((book: Book) => {   
-                console.log(`
-            ID: ${book.Id},
-            Title: ${book.Title},
-            Author: ${book.Author}
-            Year: ${book.Year},
-            `)
+            this.items.forEach((item) => { 
+                if(item instanceof Book){
+                    console.log(`
+                    ID: ${item.ID},
+                    Title: ${item.Title},
+                    Author: ${item.Author}
+                    Year: ${item.Year},
+                    `)
+                }  
             })
         }
         rls.keyInPause('\n')
     }
 
+    // Loans management
 
+    lendItem(){
+        const readResult = FileManager.readFile('loans')
+        const readItems = FileManager.readFile('items')
+        const readUsers = FileManager.readFile('users')
+        if(readResult && readItems && readUsers){
+            this.loans = readResult
+            this.items = readItems
+            this.users = readUsers
+        }
+        const userID: string = rls.question('Ingrese el ID del usuario: ')
+        const itemID: string = rls.question('Ingrese el ID del item: ')
+        const user = this.users.find((user) => user.ID === userID)
+        const item= this.items.find((item) => item.ID === itemID)
+        
+        if(user && item){
+
+            if(item.ItemAvailability === false || user.IsPenalized === true) {
+                console.log('Item no disponible o usuario inhabilitado.'); 
+                return
+            } else{
+                item.markAsUnavailable()
+                FileManager.appendToFile(this.items, 'items')
+                const newLoan = new Loan(item, user)
+                this.loans.push(newLoan)
+                FileManager.appendToFile(this.loans, 'loans')
+            }
+         }else{
+             console.log('Fallo al realizar el prestamo. Revise Item y Usuario');
+         }   
+     }
+
+    returnItem(){
+        const readResult = FileManager.readFile('loans')
+        const readUsers = FileManager.readFile('users')
+        const readItems = FileManager.readFile('items')
+        if(readResult && readItems && readUsers){
+            this.loans = readResult
+            this.users = readUsers
+            this.items = readItems
+        }
+        const itemID = rls.question('Enter the item ID: ')
+        const userID = rls.question('Enter the user ID: ');
+        const date = rls.question('Enter the return date(mm/dd/yyyy): ')
+        const returnDate = new Date(date);
+        const itemLoan = this.items.find((item) => item.ID === itemID);
+        const userLoan = this.users.find((user) => user.ID === userID);
+        
+
+        if(itemLoan && userLoan){
+             const loan = this.findActiveLoan(itemLoan, userLoan)             
+             if(!loan){
+                 throw new Error('Prestamo no registrado. Asegurese de que el titulo y el usuario son correctos.')
+             } 
+             itemLoan.markAsAvailable()
+             const dueDate = loan.DueDate
+            
+        if(returnDate > dueDate){
+             const lateDays = Math.ceil((returnDate.getTime() - dueDate.getTime()) / (1000 * 3600 * 24))
+             let lateFee: number = 0;
+             switch (true) {
+                 case (lateDays === 1):
+                     lateFee = 2
+                     break;
+                 case (lateDays >= 2 && lateDays < 5):
+                     lateFee = 3
+                     break;
+                 case (lateDays >= 5 && lateDays <=10):
+                     lateFee = 6
+                     break;
+                 case(lateDays > 10): 
+                    userLoan.markAsPenalized()
+                    break;
+                 default:
+                     console.log('Usuario sancionado.');
+                     break;
+                    }
+                    userLoan.increaseScoring(lateFee)
+                    console.log(`${userLoan.Name} devolvio ${itemLoan.Title} luego de ${lateDays} dias. Penalizacion de ${lateFee} puntos.`);
+                } else{
+                    console.log(`${userLoan.Name} devolvio ${itemLoan.Title} a tiempo.`);
+                    if(userLoan.Scoring > 0 ){
+                        userLoan.decreaseScoring(1)
+                    }
+                }
+                
+                this.loans = this.loans.filter((delLoan) => delLoan !== loan)
+                this.users = this.users.map(user => user.ID === userLoan.ID ? userLoan : user)
+                this.items = this.items.map(item => item.ID === itemLoan.ID ? itemLoan : item)
+                FileManager.appendToFile(this.users, 'users')
+                FileManager.appendToFile(this.items, 'items')
+                FileManager.appendToFile(this.loans, 'loans')
+                console.log(`El usuario ${userLoan.Name} devolvió el item ${itemLoan.Title} el dia ${returnDate.toLocaleDateString()}`);
+            } else {
+             console.log('Error al encontrar el prestamo.');
+         }
+
+    }
+
+    showActiveLoans(){
+        const readResult = FileManager.readFile('loans')        
+        if(readResult){
+            this.loans = readResult
+            console.log( '-'.repeat(5), 'Active Loans', '-'.repeat(5));
+        }
+        if(!this.loans.length){
+            console.log('No loans found. \n');
+        } else {
+            this.loans.forEach((loan: Loan) => {   
+                console.log(`
+                    ID: ${loan.ID},
+                    Item: ${loan.Item && loan.Item.Title ? loan.Item.Title : 'Item not found'},
+                    User: ${loan.User && loan.User.Name ? loan.User.Name : 'User not found'},
+                    Loan date: ${loan.LoanDate.toLocaleDateString()},
+                    Due date: ${loan.DueDate.toLocaleDateString()}
+                `)
+            })
+        }
+        rls.keyInPause('\n')
+    }
+    
+    private findItem(item: LibraryItem): LibraryItem | undefined{
+        return this.items.find((i) => i.ID === item.ID)
+        
+    }
+    private isUserActive(user: User): boolean{
+        return this.users.includes(user)
+    }
+    private findActiveLoan(item: LibraryItem, user: User): Loan | undefined{
+        return this.loans.find((loan) => loan.Item.ID === item.ID && loan.User.ID === user.ID)
+    }
     menu(){
         mainMenu()
     }

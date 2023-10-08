@@ -1,0 +1,82 @@
+[
+  {
+    "type": "Magazine",
+    "id": "ad23a244-2824-4f35-b4e6-643d6191e72a",
+    "title": "National Geographic",
+    "year": 2020,
+    "isAvailable": true,
+    "editorial": "Editorial 1"
+  },
+  {
+    "type": "Magazine",
+    "id": "2ea3c78b-a083-4981-9b14-43e3f22602c6",
+    "title": "Time",
+    "year": 2021,
+    "isAvailable": true,
+    "editorial": "Editorial 2"
+  },
+  {
+    "type": "Magazine",
+    "id": "73356871-2b7b-4241-9bd1-58f42f817fdc",
+    "title": "The New Yorker",
+    "year": 2022,
+    "isAvailable": true,
+    "editorial": "Editorial 3"
+  },
+  {
+    "type": "Magazine",
+    "id": "f057f503-c4a9-4b9c-9a05-f6afd934d029",
+    "title": "Vogue",
+    "year": 2023,
+    "isAvailable": true,
+    "editorial": "Editorial 4"
+  },
+  {
+    "type": "Magazine",
+    "id": "0fadab6a-4d39-49f8-a2dd-3eae1178f14c",
+    "title": "People",
+    "year": 2024,
+    "isAvailable": true,
+    "editorial": "Editorial 5"
+  },
+  {
+    "type": "Book",
+    "id": "e1c0e430-8e95-4a30-ab9a-903ae44f6f00",
+    "title": "Don Quijote de la Mancha",
+    "year": 2020,
+    "isAvailable": true,
+    "author": "Miguel de Cervantes"
+  },
+  {
+    "type": "Book",
+    "id": "734d7205-36ba-474d-a02b-ef4611670619",
+    "title": "Matar a un ruiseñor",
+    "year": 2023,
+    "isAvailable": true,
+    "author": "Harper Lee"
+  },
+  {
+    "type": "Book",
+    "id": "42c31528-a872-4341-9b47-634d525a1c47",
+    "title": "El gran Gatsby",
+    "year": 2024,
+    "isAvailable": true,
+    "author": "F. Scott Fitzgerald"
+  },
+  {
+    "type": "Book",
+    "id": "24e530ff-0f0d-4fa5-8a99-4f76b392cef1",
+    "title": "Cien años de soledad",
+    "year": 2021,
+    "isAvailable": true,
+    "author": "Gabriel García Márquez"
+  },
+  {
+    "type": "Book",
+    "id": "faa2689b-948d-4735-9c68-b23886e92075",
+    "title": "Harry Potter",
+    "year": 1996,
+    "isAvailable": true,
+    "author": "JK Rowling"
+  }
+]
