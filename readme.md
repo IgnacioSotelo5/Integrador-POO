@@ -1,6 +1,3 @@
-Tipo de trabajo: Integrador
-Sede: San Cayetano
-Módulo: POO
 Consigna general: Crear un sistema de gestión de biblioteca.
 Detalles funcionales:
 1- Administración de biblioteca.
