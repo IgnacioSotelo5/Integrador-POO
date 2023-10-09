@@ -19,24 +19,6 @@ export class Library {
         this.users = []
     }
 
-    //getters 
-
-    getUser(id: string): User | undefined{
-        const read = FileManager.readFile('users')
-        if(read){
-            this.users = read
-        }
-        return this.users.find(user => user.ID === id)
-    }
-    getItem(id: string): LibraryItem | undefined{
-        const read = FileManager.readFile('items')
-        if(read){
-            this.items = read 
-        }
-        return this.items.find(item => item.ID === id)
-    }
-    
-
     //Users management
     
     createUser(){
@@ -325,26 +307,29 @@ export class Library {
             this.items = readItems
             this.users = readUsers
         }
-        const userID: string = rls.question('Ingrese el ID del usuario: ')
-        const itemID: string = rls.question('Ingrese el ID del item: ')
+        const userID: string = rls.question('Enter user ID: ')
+        const itemID: string = rls.question('Enter item ID: ')
         const user = this.users.find((user) => user.ID === userID)
         const item= this.items.find((item) => item.ID === itemID)
-        
-        if(user && item){
 
-            if(item.ItemAvailability === false || user.IsPenalized === true) {
-                console.log('Item no disponible o usuario inhabilitado.'); 
-                return
-            } else{
-                item.markAsUnavailable()
-                FileManager.appendToFile(this.items, 'items')
-                const newLoan = new Loan(item, user)
-                this.loans.push(newLoan)
-                FileManager.appendToFile(this.loans, 'loans')
-            }
-         }else{
-             console.log('Fallo al realizar el prestamo. Revise Item y Usuario');
-         }   
+        console.log(user);
+        
+        
+         if(user && item){
+
+             if(item.ItemAvailability === false || user.IsPenalized === true) {
+                 console.log('Item not available or user disabled'); 
+                 return
+             } else{
+                 item.markAsUnavailable()
+                 FileManager.appendToFile(this.items, 'items')
+                 const newLoan = new Loan(item, user)
+                 this.loans.push(newLoan)
+                 FileManager.appendToFile(this.loans, 'loans')
+             }
+          }else{
+              console.log('Error making the loan. Verify item and user');
+          }   
      }
 
     returnItem(){
@@ -362,54 +347,59 @@ export class Library {
         const returnDate = new Date(date);
         const itemLoan = this.items.find((item) => item.ID === itemID);
         const userLoan = this.users.find((user) => user.ID === userID);
-        
-
+    
         if(itemLoan && userLoan){
              const loan = this.findActiveLoan(itemLoan, userLoan)             
              if(!loan){
-                 throw new Error('Prestamo no registrado. Asegurese de que el titulo y el usuario son correctos.')
+                 throw new Error('Unregistered loan. Make sure the title and username are correct.')
              } 
              itemLoan.markAsAvailable()
              const dueDate = loan.DueDate
             
-        if(returnDate > dueDate){
-             const lateDays = Math.ceil((returnDate.getTime() - dueDate.getTime()) / (1000 * 3600 * 24))
-             let lateFee: number = 0;
-             switch (true) {
-                 case (lateDays === 1):
-                     lateFee = 2
-                     break;
-                 case (lateDays >= 2 && lateDays < 5):
-                     lateFee = 3
-                     break;
-                 case (lateDays >= 5 && lateDays <=10):
-                     lateFee = 6
-                     break;
-                 case(lateDays > 10): 
-                    userLoan.markAsPenalized()
-                    break;
-                 default:
-                     console.log('Usuario sancionado.');
-                     break;
-                    }
-                    userLoan.increaseScoring(lateFee)
-                    console.log(`${userLoan.Name} devolvio ${itemLoan.Title} luego de ${lateDays} dias. Penalizacion de ${lateFee} puntos.`);
+            if(returnDate > dueDate){
+                const lateDays = Math.ceil((returnDate.getTime() - dueDate.getTime()) / (1000 * 3600 * 24))
+                let lateFee: number = 0;
+
+                switch (true) {
+                    case (lateDays === 1):
+                        lateFee = 2
+                        break;
+                        case (lateDays >= 2 && lateDays < 5):
+                            lateFee = 3
+                            break;
+                            case (lateDays >= 5 && lateDays <=10):
+                                lateFee = 6
+                                break;
+                                case(lateDays > 10): 
+                                userLoan.penalizeUser()
+                                break;
+                                default:
+                                    console.log('User penalized.');
+                                    break;
+                                }                                
+                                userLoan.increaseScoring(lateFee)
+
+                                if(userLoan.IsPenalized){
+                                    userLoan.checkPenalty()
+                                }
+                    console.log(`${userLoan.Name} returned ${itemLoan.Title} after ${lateDays} days. ${lateFee} points penalty.`);
                 } else{
-                    console.log(`${userLoan.Name} devolvio ${itemLoan.Title} a tiempo.`);
+                    console.log(`${userLoan.Name} returned ${itemLoan.Title} on time.`);
                     if(userLoan.Scoring > 0 ){
                         userLoan.decreaseScoring(1)
+                        console.log('The user deducts one point from the scoring because they returned the item on time.');
+                        
                     }
                 }
-                
                 this.loans = this.loans.filter((delLoan) => delLoan !== loan)
                 this.users = this.users.map(user => user.ID === userLoan.ID ? userLoan : user)
                 this.items = this.items.map(item => item.ID === itemLoan.ID ? itemLoan : item)
                 FileManager.appendToFile(this.users, 'users')
                 FileManager.appendToFile(this.items, 'items')
                 FileManager.appendToFile(this.loans, 'loans')
-                console.log(`El usuario ${userLoan.Name} devolvió el item ${itemLoan.Title} el dia ${returnDate.toLocaleDateString()}`);
+                console.log(`User ${userLoan.Name} returned ${itemLoan.Title} on ${returnDate.toLocaleDateString()}`);
             } else {
-             console.log('Error al encontrar el prestamo.');
+             console.log('Error finding the loan.');
          }
 
     }
@@ -426,14 +416,39 @@ export class Library {
             this.loans.forEach((loan: Loan) => {   
                 console.log(`
                     ID: ${loan.ID},
-                    Item: ${loan.Item && loan.Item.Title ? loan.Item.Title : 'Item not found'},
-                    User: ${loan.User && loan.User.Name ? loan.User.Name : 'User not found'},
+
+                        Item: ${loan.Item && loan.Item.Title ? loan.Item.Title : 'Item not found'} (${loan.Item.ID}),
+
+                        User: ${loan.User && loan.User.Name ? loan.User.Name : 'User not found'} (${loan.User.ID}),
+
                     Loan date: ${loan.LoanDate.toLocaleDateString()},
                     Due date: ${loan.DueDate.toLocaleDateString()}
                 `)
             })
         }
         rls.keyInPause('\n')
+    }
+
+    showScoringList(){
+        const users = FileManager.readFile('users')
+        if(users){
+            this.users = users
+            console.log('User scoring list');
+            
+        }
+        if(!this.users.length){
+            console.log('No users found');
+        } 
+        this.users.sort((a, b) => b.Scoring - a.Scoring ).forEach((user) => {
+            console.log(
+                `
+                Username: ${user.Name},
+                Scoring: ${user.Scoring}
+                ${user.IsPenalized ? 'User penalized' : 'Enabled user'}
+                `
+            );
+            
+        })
     }
     
     private findItem(item: LibraryItem): LibraryItem | undefined{

@@ -10,7 +10,7 @@ export class FileManager{
 
     static readFile(fileName: string){
         try {
-            const items = fs.readFileSync(`${fileName}.json`, {encoding: 'utf-8'})
+            const items = fs.readFileSync(`../data/${fileName}.json`, {encoding: 'utf-8'})
             const itemsData = JSON.parse(items)
             if(fileName === 'users'){
                 return itemsData.map((item: UserObject) => User.userFromData(item))   
@@ -29,6 +29,7 @@ export class FileManager{
             if(fileName === 'loans'){
                 return itemsData.map((item: loanObject) => Loan.loanFromData(item))      
             }
+            console.log(itemsData);
             
         } catch (error) {
             console.log(`Unexpected error: ${error}`)

@@ -1,5 +1,4 @@
 import * as rls from 'readline-sync'
-import { mainMenu } from './mainMenu';
 import { library } from '../index'
 
 
@@ -21,7 +20,7 @@ export function userMenu(){
             library.deleteUser()
             break;
         case 4: 
-            mainMenu()
+            library.showScoringList()
             break;
         default:
             console.log(`See you!`);  
@@ -35,5 +34,5 @@ const userMenuOptions = [
     'Update User',
     'Show User',
     'Delete User',
-    'Back'
+    'User scoring list'
 ]

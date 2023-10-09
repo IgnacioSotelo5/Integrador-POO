@@ -140,7 +140,8 @@
       "apartment": ""
     },
     "phoneNumber": "2983343212",
-    "scoring": 0,
-    "isPenalized": false
+    "scoring": 9,
+    "isPenalized": true,
+    "penalizedUntil": "2023-10-16T01:41:51.242Z"
   }
 ]

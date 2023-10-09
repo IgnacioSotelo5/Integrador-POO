@@ -1,5 +1,4 @@
 import * as rls from 'readline-sync'
-import { mainMenu } from './mainMenu';
 import { library } from '../index';
 
 
@@ -25,9 +24,6 @@ export function magazineMenu(){
             library.deleteMagazine()
             rls.keyInPause('\n')
             break;
-        case 4: 
-            mainMenu()
-            break;
         default:
             console.log(`See you!`);  
             return
@@ -40,5 +36,4 @@ const magazineMenuOptions = [
     'Update Magazine',
     'Show Magazine',
     'Delete Magazine',
-    'Back'
 ]

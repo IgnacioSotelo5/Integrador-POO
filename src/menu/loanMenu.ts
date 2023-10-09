@@ -1,5 +1,4 @@
 import * as rls from 'readline-sync'
-import { mainMenu } from './mainMenu';
 import { library } from '../index';
 
 
@@ -19,7 +18,6 @@ export function loanMenu(){
             library.showActiveLoans()
             break;
         default:
-            mainMenu() 
             return
         }
     }

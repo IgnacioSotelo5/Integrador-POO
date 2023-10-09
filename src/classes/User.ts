@@ -8,6 +8,9 @@ export interface UserObject {
     name: string;
     address: iAddress;
     phoneNumber: string;
+    scoring: number;
+    isPenalized: boolean;
+    penalizedUntil?: Date;
 }
 
 export class User {
@@ -17,6 +20,7 @@ export class User {
     private phoneNumber: string;
     private scoring: number;
     private isPenalized: boolean;
+    private penalizedUntil?: Date;
 
     constructor(id: string, name: string, address: iAddress, phoneNumber: string) {
         this.id = id;
@@ -58,6 +62,9 @@ export class User {
     }
     increaseScoring(points: number){
         this.scoring += points
+        if(this.scoring > 6){
+            this.penalizeUser()
+        }
     }
     decreaseScoring(points: number){
         this.scoring -= points
@@ -65,14 +72,29 @@ export class User {
     get IsPenalized(){
         return this.isPenalized
     }
-    markAsPenalized(){
+    penalizeUser(){
         this.isPenalized = true
+        const now = new Date();
+        const sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+        this.penalizedUntil = sevenDaysLater
+    }
+    checkPenalty(){
+        if(this.IsPenalized && this.penalizedUntil){
+            const now = new Date()
+            if(now.getTime() > this.penalizedUntil.getTime()){
+                this.isPenalized = false
+                this.penalizedUntil = undefined
+            }
+        }
     }
     static userFromData(data: User | UserObject): User {
         if (data instanceof User) {
             return data;
         } else {
             const item = new User(data.id, data.name, data.address, data.phoneNumber);
+            item.scoring = data.scoring;
+            item.isPenalized = data.isPenalized;
+            item.penalizedUntil = data.penalizedUntil;
             return item;
         }
     }
