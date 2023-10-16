@@ -143,5 +143,17 @@
     "scoring": 9,
     "isPenalized": true,
     "penalizedUntil": "2023-10-16T01:41:51.242Z"
+  },
+  {
+    "id": "7dcb94f5-c83e-4b76-9e7a-94b780005ffe",
+    "name": "Pedro",
+    "address": {
+      "street": "Rodriguez",
+      "number": 111,
+      "apartment": "1C"
+    },
+    "phoneNumber": "555-555-555",
+    "scoring": 2,
+    "isPenalized": false
   }
 ]

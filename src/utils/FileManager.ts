@@ -34,7 +34,6 @@ export class FileManager{
         } catch (error) {
             console.log(`Unexpected error: ${error}`)
             return []
-            
         }
     }
     static appendToFile(data: User[] | LibraryItem []| Loan[], fileName: string){

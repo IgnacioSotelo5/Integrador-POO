@@ -4,9 +4,9 @@ import { Magazine } from "./Magazine";
 import { User } from "./User";
 import { mainMenu } from "../menu/mainMenu";
 import { FileManager } from "../utils/FileManager";
-import * as rls from 'readline-sync'
 import { randomUUID } from "crypto";
 import { LibraryItem } from "./LibraryItem";
+import * as rls from 'readline-sync'
 
 export class Library {
      items: LibraryItem[];
@@ -312,9 +312,6 @@ export class Library {
         const user = this.users.find((user) => user.ID === userID)
         const item= this.items.find((item) => item.ID === itemID)
 
-        console.log(user);
-        
-        
          if(user && item){
 
              if(item.ItemAvailability === false || user.IsPenalized === true) {
@@ -374,15 +371,13 @@ export class Library {
                                 userLoan.penalizeUser()
                                 break;
                                 default:
-                                    console.log('User penalized.');
                                     break;
                                 }                                
                                 userLoan.increaseScoring(lateFee)
-
-                                if(userLoan.IsPenalized){
-                                    userLoan.checkPenalty()
-                                }
+                                userLoan.checkPenalty()
+                                
                     console.log(`${userLoan.Name} returned ${itemLoan.Title} after ${lateDays} days. ${lateFee} points penalty.`);
+
                 } else{
                     console.log(`${userLoan.Name} returned ${itemLoan.Title} on time.`);
                     if(userLoan.Scoring > 0 ){
@@ -450,14 +445,7 @@ export class Library {
             
         })
     }
-    
-    private findItem(item: LibraryItem): LibraryItem | undefined{
-        return this.items.find((i) => i.ID === item.ID)
-        
-    }
-    private isUserActive(user: User): boolean{
-        return this.users.includes(user)
-    }
+
     private findActiveLoan(item: LibraryItem, user: User): Loan | undefined{
         return this.loans.find((loan) => loan.Item.ID === item.ID && loan.User.ID === user.ID)
     }
